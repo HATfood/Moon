@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروپوزال محصول جدید: ماه</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5e3e6, #dfe9f3, #e8dff5);
+            --card-bg: rgba(255, 255, 255, 0.45);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --text-color: #333;
+            --header-color: #5d4954;
+            --accent-red: #e74c3c;
+            --accent-green: #2ecc71;
+            --accent-purple: #9b59b6;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            line-height: 1.8;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--header-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- NEW GRID LAYOUT --- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
+        }
+        
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--header-color);
+            margin-bottom: 1.2rem;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 0.8rem;
+        }
+
+        .card p, .card li {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+        }
+        
+        .card ul {
+            list-style: none;
+            padding-right: 1.5rem;
+        }
+
+        .card ul li { position: relative; }
+        .card ul li::before { content: '🌸'; position: absolute; right: -1.5rem; top: 5px; font-size: 0.9rem; }
+
+        .key-point {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            border-right: 4px solid var(--accent-purple);
+            font-weight: 600;
+        }
+        .key-point::before { content: '🔑 '; }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            margin: 1.5rem 0;
+        }
+
+        .product-series {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            padding: 1.5rem;
+            border-radius: 15px;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 0.5rem;
+        }
+
+.product-image {
+    width: 100%; /* عرض عکس را با کارت هماهنگ می‌کند */
+    height: auto; /* ارتفاع را متناسب با عرض تنظیم می‌کند تا عکس دفرمه نشود */
+    border-radius: 12px; /* گوشه‌های عکس را گرد می‌کند تا با کارت هماهنگ باشد */
+    margin-bottom: 1.5rem; /* یک فاصله بین عکس و عنوان ایجاد می‌کند */
+    display: block; /* برای اطمینان از اعمال صحیح margin */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* یک سایه ظریف برای زیبایی بیشتر */
+}
+
+        /* --- ACCORDION STYLES --- */
+        .accordion-toggle {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            padding: 12px 18px;
+            width: 100%;
+            border: none;
+            text-align: right;
+            outline: none;
+            font-size: 1.1rem;
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 600;
+            transition: background-color 0.4s ease;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-toggle:hover, .accordion-toggle.active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .accordion-toggle span {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-toggle.active span {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 8px 8px;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content ul { padding-top: 1rem; }
+        .accordion-content ul li::before { content: '🌿'; right: -1.5rem; }
+
+        .product-card.red { background: linear-gradient(135deg, #e57373, #c62828); }
+        .product-card.green { background: linear-gradient(135deg, #81c784, #388e3c); }
+        .product-card.purple { background: linear-gradient(135deg, #ba68c8, #7b1fa2); }
+
+        .packaging-section { text-align: center; }
+        .packaging-mockups { display: flex; justify-content: space-around; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+        .pack-mockup { width: 120px; height: 160px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 1rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: 600; }
+        .pack-mockup small { font-size: 0.7rem; opacity: 0.8; margin-top: 0.5rem; }
+        .pack-red { background: linear-gradient(145deg, #e53935, #b71c1c); border: 2px solid #ffd700; }
+        .pack-green { background: linear-gradient(145deg, #43a047, #1b5e20); border: 2px solid #c0c0c0; }
+        .pack-purple { background: linear-gradient(145deg, #8e24aa, #4a148c); border: 2px solid #ffd700; }
+        .cycle-pack-mockup { margin-top: 2rem; background: rgba(240, 240, 240, 0.8); border: 1px solid #ddd; padding: 2rem; border-radius: 15px; text-align: center; color: #444; }
+        .cycle-pack-mockup h4 { font-size: 1.2rem; margin-bottom: 1rem; }
+        .cycle-pack-mockup p { font-size: 0.9rem; }
+
+        .timeline { position: relative; padding: 1rem 0; list-style: none; }
+        .timeline::before { content: ''; position: absolute; top: 0; right: 18px; height: 100%; width: 4px; background: rgba(0, 0, 0, 0.1); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 1.5rem; padding-right: 45px; }
+        .timeline-item::before { content: ''; position: absolute; right: 10px; top: 10px; width: 20px; height: 20px; border-radius: 50%; background: white; border: 4px solid var(--accent-purple); z-index: 1; }
+        .timeline-item h4 { font-weight: 600; color: var(--header-color); }
+
+        .final-summary { background: linear-gradient(135deg, var(--accent-purple), #6a1b9a); color: white; }
+        .final-summary h2 { color: white; }
+
+
+/* این کد را به انتهای بخش استایل خود اضافه کنید */
+
+.split-card-layout {
+    display: flex;
+    align-items: center; /* تراز عمودی محتوا در وسط */
+    gap: 2rem; /* فاصله بین بخش متن و عکس */
+}
+
+.split-text-part {
+    flex: 1; /* این بخش بزرگ شده و فضای باقی‌مانده را پر می‌کند */
+}
+
+.split-image-part {
+    flex: 0 0 320px; /* عرض ثابت 320 پیکسل برای بخش عکس */
+    align-self: stretch; /* کاری می‌کند که ارتفاع عکس با ارتفاع متن هماهنگ شود */
+}
+
+.split-image-part img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* عکس را به زیبایی در کادر جا می‌دهد بدون دفرمه شدن */
+    border-radius: 15px; /* گوشه‌های گرد هماهنگ با کارت */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* برای نمایش بهتر در صفحات کوچکتر */
+@media (max-width: 900px) {
+    .split-card-layout {
+        flex-direction: column-reverse; /* عکس بالا و متن پایین قرار می‌گیرد */
+    }
+    .split-image-part {
+        flex-basis: auto; /* عرض ثابت را در حالت موبایل لغو می‌کند */
+        width: 100%;
+        max-width: 400px; /* یک حداکثر عرض برای زیبایی بیشتر */
+        height: 250px; /* یک ارتفاع مشخص در حالت موبایل */
+    }
+}
+
+        footer { text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #777; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header>
+            <h1>طرح تجاری گروه محصولی جدید بلوط ویژه زنان </h1>
+            <h1>«ماه کامل🌝»</h1>
+            <h2>ماه همیشه کامل نیست</h2>
+        </header>
+
+        <main class="main-grid">
+            
+            <!-- کد جدید با چیدمان دوتکه -->
+            <div class="card full-width split-card-layout">
+                
+                <!-- بخش متن در سمت راست -->
+                <div class="split-text-part">
+                    <h2>📜 ۱- خلاصه مدیریتی</h2>
+                    <p>بلوط به‌عنوان یکی از پیشگامان تولید نوشیدنی‌های گرم با محوریت سلامت است که بلوط باور دارد لحظه‌ی نوشیدن فراتر از یک عادت روزمره، تجربه‌ای عمیق و خاطره‌ساز است.</p>
+                    <p>با توجه به رشد روزافزون بازار سلامت زنان و اهمیت قاعدگی به‌عنوان بخشی جدایی‌ناپذیر از زندگی، معرفی خط محصول جدید «ماه کامل» فرصتی ناب و ارزش‌آفرین برای مگابرند بلوط فراهم می‌آورد تا به نماد حمایت از جایگاه والا و ارتقای کیفیت زندگی زنان تبدیل شود.</p>
+                    <p>«ماه کامل» اولین مجموعه تخصصی چای در ایران است که برای سه دوره اصلی چرخه قاعدگی زنان با حال و هوای جسمی، روحی و احساسی کاملا متفاوت طراحی شده است تا پاسحگوی این نیاز مهم و اغماض شده قرار گیرد و مزیت آفرین باشد. در حالی‌که تاکنون هیچ برند داخلی یا خارجی محصولی تحت عنوان چای ویژه این دوره متناوب ارائه نکرده است، گرچه برخی برندها دمنوش‌هایی با کارکرد عمومی سلامت زنان تولید کرده‌اند. مزیت ارزشمند و متفاوت ما در طراحی علمی فیزیولوژی و سایکولوژی هر مرحله از این دوره است و برندینگ اختصاصی و احساسی در کنار بسته بندی خاص و جذاب عامل اصلی موفقیت این محصول نوآورانه در حوزه اقتصادی، اجتماعی و فرهنگی است.</p>
+                </div>
+
+                <!-- بخش عکس در سمت چپ -->
+                <div class="split-image-part">
+                    <img src="4.png" alt="تصویر مفهومی محصول ماه">
+                </div>
+
+            </div>
+
+            <!-- Sections 2 and 3 are now side-by-side in a 2-column grid -->
+            <div class="card">
+                <h2>📊 ۲- آمار و تحقیقات بازار</h2>
+                <ul>
+                    <li>WHO (2021): حدود ۷۵٪ زنان علائم PMS را تجربه می‌کنند.</li>
+                    <li>ACOG (2019): حدود ۸۵–۹۰٪ زنان تغییرات جسمی و خلقی را تجربه می‌کنند.</li>
+                </ul>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="pmsChart"></canvas>
+                </div>
+                <ul>
+                    <li>بازار جهانی نوشیدنی گرم ویژه زنان تا ۲۰۳۰ به ۶.۸ میلیارد دلار می‌رسد.</li>
+                </ul>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="marketGrowthChart"></canvas>
+                </div>
+                <ul>
+                    <li>بازار دمنوش ایران در ۵ سال گذشته ۳۵٪ رشد داشته (۶۰٪ مصرف‌کنندگان زن هستند).</li>
+                </ul>
+                <div class="key-point">
+                    تأثیر اقتصادی: بر اساس گزارش McKinsey (2023)، برندهایی که در حوزه سلامت زنان سرمایه‌گذاری کرده‌اند، در بخش FMCG رشد ۲.۵ برابر سریع‌تر از میانگین بازار داشته‌اند. محصولات سلامت‌محور به‌طور میانگین در دسته Premium قرار می‌گیرند و حاشیه سود آن‌ها حدود ۱۵–۲۵٪ بالاتر از محصولات معمولی است.
+همچنین، ماهیت چرخه‌ای این محصول، امکان طراحی مدل اشتراکی (Subscription Model) را فراهم می‌کند که باعث ایجاد تقاضای پایدار و پیش‌بینی‌پذیر برای برند می‌شود.
+
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🔭 ۳- بررسی رقبا</h2>
+                <h4>برندهای داخلی:</h4>
+                <ul>
+                    <li>در بازار ایران تاکنون هیچ محصول گسترده و جدی با عنوان «چای ویژه دوران قاعدگی» عرضه نشده است. تنها چند شرکت کوچک، مانند دکتر بیز و تیشاپ، محصولاتی با اشاره به این موضوع ارائه کرده‌اند، اما میزان عرضه آن‌ها بسیار محدود بوده و از نظر برندسازی، طراحی تخصصی و حضور در بازار قابل مقایسه با یک محصول حرفه‌ای نیستند. بنابراین می‌توان گفت این حوزه عملاً بکر مانده و فضای مناسبی برای ورود یک برند جدی و پیشرو وجود دارد.</li>
+
+                </ul>
+                <br>
+                <h4>برندهای خارجی:</h4>
+                 <ul>
+                    <li>در سطح بین‌الملل چند نمونه با عنوان‌هایی مثل Woman’s Tea (Yogi Tea) یا Womankind (Pukka) و همچنین محصولات تحت عنوان Frauentee در آلمان وجود دارند. این محصولات بیشتر روی سلامت عمومی زنان یا توازن هورمونی تمرکز کرده‌اند و نه به‌طور مشخص بر فازهای چرخه قاعدگی. علاوه بر این، حتی در بازار جهانی هم برندسازی و مارکتینگ قوی برای این دسته انجام نشده و جایگاه خیلی شناخته‌شده‌ای ندارند.</li>
+
+                </ul>
+                <br>
+                <h4>جمع‌بندی رقابتی:</h4>
+                <p>در بازار ایران تنها چند شرکت کوچک محصولاتی مرتبط با دوران قاعدگی ارائه کرده‌اند، اما به دلیل عرضه محدود و نبود هویت برند و طراحی تخصصی، عملاً به‌عنوان رقیب جدی قابل‌توجه نیستند. در سطح بین‌المللی نیز هرچند نمونه‌هایی با عناوینی مانند Woman’s Tea یا Frauentee وجود دارد، اما آن‌ها نیز بیشتر بر سلامت عمومی زنان تمرکز داشته و برندسازی قدرتمند و جایگاه‌یابی مشخصی در حوزه چرخه قاعدگی ندارند. بنابراین فرصت ویژه‌ای وجود دارد تا بلوط به‌عنوان اولین برند ایرانی و از معدود برندهای منطقه‌ای، محصولی اختصاصی، متمایز و مبتنی بر چرخه قاعدگی را به بازار معرفی کند.</p>
+                <div class="key-point">
+                     مزیت ما: بلوط می‌تواند اولین برند ایرانی (و از معدود برندهای منطقه‌ای) باشد که چنین محصولی را به بازار معرفی می‌کند.
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2>💡 ۴- راهکار پیشنهادی – مجموعه «ماه کامل»</h2>
+                <p style="text-align:center; font-size: 1.2rem; font-weight: 600;">سری سه‌گانه چای تخصصی برای چرخه قاعدگی</p>
+                <div class="product-series">
+                    <div class="product-card red">
+			<img src="1.png" alt="بسته‌بندی محصول ماه‌شید" class="product-image">
+                        <h3>🔴 ۱. ماه‌نوش (Menstruation – روز ۱ تا ۵) </h3>
+                        <h3>«آرام‌تر، زیباتر، زنانه‌تر»</h3>
+                        <p><strong>هدف:</strong> کاهش درد، اسپاسم و خستگی</p>
+                        <button class="accordion-toggle">ترکیبات علمی <span>▼</span></button>
+                        <div class="accordion-content">
+                            <ul>
+                                <li>چای سیاه ملایم (۳۰٪ روز / ۲۰٪ شب)</li>
+                                <li>بابونه (کاهش درد و انقباض)</li>
+                                <li>زنجبیل (ضد التهاب، کاهش درد قاعدگی تا ۲۵٪ طبق مطالعات)</li>
+                                <li>دارچین (کاهش خونریزی و درد – مطالعه دانشگاه تهران ۲۰۱۵)</li>
+                                <li>رازیانه (تنظیم هورمون، ضد نفخ)</li>
+                                <li>گل سرخ (آرام‌بخش و بهبود خلق)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="product-card green">
+
+			<img src="2.png" alt="بسته‌بندی محصول ماه‌شید" class="product-image">
+                        <h3>🟢 ۲. ماه‌شید (Post-menstrual – روز ۶ تا ۱۴) </h3>
+                        <h3>«درخشان مثل ماه کامل»</h3>
+                        <p><strong>هدف:</strong> بازسازی انرژی و شادابی پس از پریود</p>
+                        <button class="accordion-toggle">ترکیبات علمی <span>▼</span></button>
+                        <div class="accordion-content">
+                            <ul>
+                                <li>چای سبز یا سفید (آنتی‌اکسیدان، بهبود تمرکز)</li>
+                                <li>نعناع یا اسپیرمینت (نشاط‌آور، ضد نفخ)</li>
+                                <li>هیبیسکوس (بهبود گردش خون)</li>
+                                <li>گل سرخ (شادابی پوست)</li>
+                                <li>پوست پرتقال / لیمو خشک (ویتامین C، تقویت سیستم ایمنی)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="product-card purple">
+			<img src="3.png" alt="بسته‌بندی محصول ماه‌شید" class="product-image">
+                        <h3>🟣 ۳. ماه‌یار (PMS – روز ۲۱ تا ۲۸)</h3>
+                        <h3> «تعادل پیش ازتحول»</h3>
+                        <p><strong>هدف:</strong> تعادل روحی، کاهش اضطراب و بهبود خواب</p>
+                        <button class="accordion-toggle">ترکیبات علمی <span>▼</span></button>
+                        <div class="accordion-content">
+                            <ul>
+                                <li>چای سبز ملایم یا اولانگ سبک</li>
+                                <li>بابونه (کاهش اضطراب – مطالعات بالینی ۲۰۱۶)</li>
+                                <li>بادرنجبویه (بهبود خواب و خلق)</li>
+                                <li>نعناع فلفلی (کاهش نفخ و بهبود گوارش)</li>
+                                <li>گل گاوزبان (آرام‌بخش – با دوز ایمن)</li>
+                                <li>اسطوخودوس (ضد اضطراب و بهبود کیفیت خواب)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🎨 ۵- هویت محصول</h2>
+                <div class="packaging-section">
+                    <h3>نام: «ماه – همیشه کامل نیست»</h3>
+                    <div class="packaging-mockups">
+                        <div class="pack-mockup pack-red">ماه‌نوش<small>قرمز مات + طلایی</small></div>
+                        <div class="pack-mockup pack-green">ماه‌شید<small>سبز پاستلی + نقره‌ای</small></div>
+                        <div class="pack-mockup pack-purple">ماه‌یار<small>بنفش مخملی + طلایی</small></div>
+                    </div>
+                    <div class="cycle-pack-mockup">
+                        <h4>🎁 باندل سه‌تایی (Cycle Pack)</h4>
+                        <p>یک جعبه لوکس با طراحی مینیمال و مدرن که مانند یک جعبه جواهر باز می‌شود و حس ارزش و پرستیژ ایجاد می‌کند.</p>
+                        <p style="margin-top: 1rem; font-weight: 600; font-style: italic;">لوگو: «ماه» با طراحی شاعرانه، همراه با شعار: ماه همیشه کامل نیست</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🚀 ۶- مزایا و ارزش‌آفرینی برای بلوط</h2>
+                <h4>💰 اقتصادی:</h4>
+                <ul>
+                    <li>توسعه بازار نوشیدنی‌های سلامت (Premium segment)</li>
+                    <li>افزایش حاشیه سود با جایگاه لوکس محصول (۱۵–۲۵٪ بالاتر از چای معمولی)</li>
+                    <li>امکان فروش تکی و باندل (Subscription Model → تقاضای پایدار)</li>
+                </ul>
+                <h4>💖 اجتماعی و فرهنگی:</h4>
+                <ul>
+                    <li>حمایت واقعی از زنان و ارتقای کیفیت زندگی آنان</li>
+                    <li>شکستن تابوهای اجتماعی در مورد قاعدگی</li>
+                    <li>برندسازی بلوط به‌عنوان پیشرو در سلامت زنان ایران</li>
+                </ul>
+                 <h4>🏆 رقابتی:</h4>
+                <ul>
+                    <li>محصول چرخه‌ای با بسته‌بندی لوکس → بدون رقیب داخلی جدی</li>
+                    <li>توانایی ورود به بازار صادرات منطقه‌ای (کشورهای MENA)</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                 <h2>🗺️ ۷- برنامه اجرا</h2>
+                 <ul class="timeline">
+                     <li class="timeline-item"><h4>مرحله ۱: تحقیق و توسعه</h4><p>فرمولاسیون + تست‌های آزمایشگاهی</p></li>
+                     <li class="timeline-item"><h4>مرحله ۲: طراحی هویت برند</h4><p>طراحی بسته‌بندی و هویت بصری</p></li>
+                     <li class="timeline-item"><h4>مرحله ۳: تولید آزمایشی</h4><p>تولید نمونه اولیه و تست بازار</p></li>
+                     <li class="timeline-item"><h4>مرحله ۴: عرضه نهایی</h4><p>تولید انبوه و عرضه به بازار</p></li>
+                 </ul>
+                 <p style="text-align: center; font-weight: 600;">⏳ برآورد زمان: حدود ۳ ماه تا عرضه به بازار</p>
+            </div>
+            
+            <div class="card full-width final-summary">
+                <h2>✨ ۸- جمع‌بندی</h2>
+                <p>پروژه «ماه» نه تنها یک محصول جدید بلکه یک اکوسیستم زنانه است: ترکیب دانش پزشکی، گیاهان دارویی، طراحی لوکس و پیام اجتماعی قدرتمند.</p>
+                <p>این محصول می‌تواند بلوط را به پیشگام سلامت زنان در ایران و منطقه تبدیل کند و همزمان سودآوری مالی و ارزش اجتماعی بالایی ایجاد نماید.</p>
+            </div>
+        </main>
+        
+        <footer>
+            تهیه شده در واحد مارکتینگ
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Chart.js implementation
+            const pmsCtx = document.getElementById('pmsChart').getContext('2d');
+            new Chart(pmsCtx, {
+                type: 'doughnut',
+                data: { labels: ['تجربه علائم PMS', 'بدون علائم'], datasets: [{ data: [75, 25], backgroundColor: ['rgba(231, 76, 60, 0.7)', 'rgba(236, 240, 241, 0.7)'], borderColor: ['rgba(231, 76, 60, 1)', 'rgba(189, 195, 199, 1)'], borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Vazirmatn' } } }, title: { display: true, text: 'شیوع علائم PMS', font: { family: 'Vazirmatn', size: 16 } } } }
+            });
+
+            const marketGrowthCtx = document.getElementById('marketGrowthChart').getContext('2d');
+            new Chart(marketGrowthCtx, {
+                type: 'bar',
+                data: { labels: ['2022', '2030 (پیش‌بینی)'], datasets: [{ label: 'ارزش بازار (میلیارد دلار)', data: [4.3, 6.8], backgroundColor: ['rgba(155, 89, 182, 0.6)', 'rgba(52, 152, 219, 0.6)'], borderColor: ['rgba(155, 89, 182, 1)', 'rgba(52, 152, 219, 1)'], borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: (value) => '$' + value + 'B' } } }, plugins: { legend: { display: false }, title: { display: true, text: 'رشد بازار جهانی دمنوش‌ها', font: { family: 'Vazirmatn', size: 16 } } } }
+            });
+
+            // --- NEW ACCORDION SCRIPT ---
+            const accordions = document.getElementsByClassName("accordion-toggle");
+            for (let i = 0; i < accordions.length; i++) {
+                accordions[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                    } 
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
